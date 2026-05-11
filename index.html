@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adham Pro Platform</title>
+
+<style>
+body{
+  margin:0;
+  font-family: Arial;
+  background:#0b1220;
+  color:white;
+  text-align:center;
+}
+
+#login{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+}
+
+button{
+  padding:12px 16px;
+  margin:6px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  background:#2563eb;
+  color:white;
+}
+
+input, select{
+  padding:10px;
+  margin:5px;
+  width:220px;
+  border-radius:8px;
+  border:none;
+}
+
+#app{
+  display:none;
+  padding:20px;
+}
+
+.box{
+  margin-top:20px;
+}
+
+.dev{
+  position:fixed;
+  bottom:12px;
+  right:12px;
+  background:#1e293b;
+  padding:10px;
+  border-radius:15px;
+  font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- تسجيل الدخول -->
+<div id="login">
+  <h2>Login Page</h2>
+  <button onclick="enter()">دخول</button>
+</div>
+
+<!-- التطبيق -->
+<div id="app">
+
+  <h1>Developer Adham</h1>
+
+  <button onclick="openTab('translate')">الترجمة</button>
+  <button onclick="openTab('ai')">AI</button>
+  <button onclick="openTab('decor')">الزخرفة</button>
+  <button onclick="openTab('search')">البحث</button>
+
+  <div id="view" class="box"></div>
+
+  <div class="dev">📞 +201014962157</div>
+</div>
+
+<script>
+
+function enter(){
+  document.getElementById("login").style.display="none";
+  document.getElementById("app").style.display="block";
+}
+
+function openTab(tab){
+  let v=document.getElementById("view");
+
+  if(tab==="translate"){
+    v.innerHTML=`
+      <h3>🌍 الترجمة</h3>
+      <input id="t">
+      <button onclick="translate()">ترجمة</button>
+      <div id="trOut"></div>
+    `;
+  }
+
+  if(tab==="ai"){
+    v.innerHTML=`
+      <h3>🤖 AI</h3>
+      <input id="aiText" placeholder="اسأل أي حاجة">
+      <button onclick="askAI()">إرسال</button>
+      <div id="aiOut"></div>
+    `;
+  }
+
+  if(tab==="decor"){
+    v.innerHTML=`
+      <h3>✨ زخرفة</h3>
+      <input id="name" placeholder="الاسم">
+      <select id="type">
+        <option value="simple">عادية</option>
+        <option value="pro">احترافية</option>
+      </select>
+      <button onclick="decorate()">زخرف</button>
+      <div id="out"></div>
+    `;
+  }
+
+  if(tab==="search"){
+    v.innerHTML=`
+      <h3>🔎 بحث</h3>
+      <input id="q">
+      <button onclick="search()">بحث جوجل</button>
+    `;
+  }
+}
+
+/* الترجمة */
+function translate(){
+  let t=document.getElementById("t").value.toLowerCase();
+
+  let dict={
+    "hello":"مرحبا",
+    "hi":"أهلا",
+    "مرحبا":"hello",
+    "كيف":"how"
+  };
+
+  document.getElementById("trOut").innerHTML =
+    dict[t] || "مش موجود";
+}
+
+/* AI الحقيقي (جاهز للربط) */
+async function askAI(){
+  let text=document.getElementById("aiText").value;
+  let out=document.getElementById("aiOut");
+
+  out.innerHTML="جاري التفكير... 🤖";
+
+  try{
+    let res = await fetch("https://api.openai.com/v1/chat/completions",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":"Bearer YOUR_API_KEY"
+      },
+      body:JSON.stringify({
+        model:"gpt-4o-mini",
+        messages:[{role:"user",content:text}]
+      })
+    });
+
+    let data = await res.json();
+    out.innerHTML = data.choices[0].message.content;
+
+  }catch(e){
+    out.innerHTML="حط API Key الأول";
+  }
+}
+
+/* الزخرفة */
+function decorate(){
+  let name=document.getElementById("name").value;
+  let type=document.getElementById("type").value;
+  let out=document.getElementById("out");
+
+  if(!name)return;
+
+  if(type==="simple"){
+    out.innerHTML=`
+      <p>『★』 ${name} 『★』</p>
+      <p>✧ ${name} ✧</p>
+      <p>꧁ ${name} ꧂</p>
+    `;
+  }
+
+  if(type==="pro"){
+    out.innerHTML=`
+      <p>꧁༺ 𝓟𝓻𝓸 ${name} ༻꧂</p>
+      <p>★彡 ${name} 彡★</p>
+      <p>『𝙳𝙴𝚅』 ${name}</p>
+      <p>✦ ${name} ✦</p>
+    `;
+  }
+}
+
+/* البحث */
+function search(){
+  let q=document.getElementById("q").value;
+  if(q) window.open("https://www.google.com/search?q="+q,"_blank");
+}
+
+</script>
+
+</body>
+</html>
